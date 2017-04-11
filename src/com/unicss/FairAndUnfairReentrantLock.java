@@ -30,18 +30,27 @@ public class FairAndUnfairReentrantLock {
 
 		public void fair() {
 			fairLock.lock();
-			System.out.print("current:" + index + " waiting：");
+			System.out.print("current:" + Thread.currentThread() + " waiting：");
 			List<Thread> list = fairLock.getQueuedThread();
 			list.forEach((s) -> System.out.print(s + " "));
 			System.out.println();
+			fairLock.unlock();
+
+		}
+
+		public void unfair() {
+			unfairLock.lock();
+			System.out.print("current:" + Thread.currentThread() + " waiting：");
 			try {
 				Thread.sleep(10000);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			fairLock.unlock();
-			index++;
+			List<Thread> list = fairLock.getQueuedThread();
+			list.forEach((s) -> System.out.print(s + " "));
+			System.out.println();
+			unfairLock.unlock();
 		}
 
 		@Override
@@ -55,6 +64,7 @@ public class FairAndUnfairReentrantLock {
 		for (int i = 0; i < 5; i++) {
 			service.submit(new Job());
 		}
+		service.shutdown();
 	}
 
 }
