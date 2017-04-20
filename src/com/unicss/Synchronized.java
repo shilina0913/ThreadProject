@@ -1,19 +1,35 @@
 package com.unicss;
 
-public class Synchronized {
-	public int sum;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-	public synchronized void add(int i) {
-		System.out.println("进入累加");
-		sum = sum + i;
-		while (sum > 5) {
+public class Synchronized extends Thread {
+	public int sum;
+	public int index;
+
+	public Synchronized(int i) {
+		index = i;
+	}
+
+	@Override
+	public void run() {
+		add();
+	}
+
+	public synchronized void add() {
+		System.out.println("线程" + index + "进入累加");
+		sum = sum + 1;
+		while (sum > 2) {
 			return;
 		}
-		add(1);
+		add();
+		sum++;
 	}
 
 	public static void main(String[] args) {
-		Synchronized s = new Synchronized();
-		s.add(1);
+		ExecutorService service = Executors.newFixedThreadPool(10);
+		for (int i = 0; i < 5; i++)
+			service.execute(new Synchronized(i) {
+			});
 	}
 }
